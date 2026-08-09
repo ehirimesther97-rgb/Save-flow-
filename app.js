@@ -1,413 +1,235 @@
-const STORAGE_KEY = "saveflow-v2";
+const STORAGE_KEY = "saveflow-v3";
 
-let data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+const defaultData = {
   goal: 100000,
   goalName: "My Savings Goal",
   saved: 0,
-  deposits: [],
-  days: [],
-  dark: false
+  streak: 0,
+  completedDays: [],
+  transactions: [],
+  darkMode: false
 };
+
+let data = loadData();
+
+function loadData() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? { ...defaultData, ...JSON.parse(saved) } : { ...defaultData };
+  } catch (error) {
+    return { ...defaultData };
+  }
+}
 
 function saveData() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
-function money(value) {
-  return "₦" + Number(value).toLocaleString("en-NG");
+function money(amount) {
+  return "₦" + Number(amount || 0).toLocaleString("en-NG");
 }
 
-function updateDashboard() {
+function percent() {
+  if (!data.goal || data.goal <= 0) return 0;
+  return Math.min(100, Math.round((data.saved / data.goal) * 100));
+}
 
-  const goal = Number(data.goal) || 1;
-  const saved = Number(data.saved) || 0;
+function updateUI() {
+  const percentage = percent();
+  const remaining = Math.max(0, data.goal - data.saved);
 
-  const remaining = Math.max(goal - saved, 0);
+  const goalElements = document.querySelectorAll("[data-goal]");
+  goalElements.forEach(el => el.textContent = money(data.goal));
 
-  const percent = Math.min(
-    Math.round((saved / goal) * 100),
-    100
-  );
+  const savedElements = document.querySelectorAll("[data-saved]");
+  savedElements.forEach(el => el.textContent = money(data.saved));
 
-  document.getElementById("goalName").textContent =
-    data.goalName || "My Savings Goal";
+  const remainingElements = document.querySelectorAll("[data-remaining]");
+  remainingElements.forEach(el => el.textContent = money(remaining));
 
-  document.getElementById("savedBig").textContent =
-    money(saved);
+  const percentElements = document.querySelectorAll("[data-percent]");
+  percentElements.forEach(el => el.textContent = percentage + "%");
 
-  document.getElementById("goalBig").textContent =
-    money(goal);
+  const goalNameElements = document.querySelectorAll("[data-goal-name]");
+  goalNameElements.forEach(el => el.textContent = data.goalName);
 
-  document.getElementById("saved").textContent =
-    money(saved);
+  const streakElements = document.querySelectorAll("[data-streak]");
+  streakElements.forEach(el => el.textContent = data.streak);
 
-  document.getElementById("remaining").textContent =
-    money(remaining);
+  const progressBars = document.querySelectorAll("[data-progress]");
+  progressBars.forEach(bar => {
+    bar.style.width = percentage + "%";
+  });
 
-  document.getElementById("percent").textContent =
-    percent + "%";
+  document.body.classList.toggle("dark", data.darkMode);
 
-  document.getElementById("progressText").textContent =
-    percent + "% complete • " +
-    money(remaining) +
-    " remaining";
-
-  document.getElementById("bar").style.width =
-    percent + "%";
-
-  const ring = document.getElementById("ring");
-
-  ring.style.setProperty(
-    "--angle",
-    (percent * 3.6) + "deg"
-  );
-
-  document.getElementById("count").textContent =
-    data.deposits.length;
-
-  document.getElementById("streak").textContent =
-    data.days.length + " 🔥";
-
-  document.getElementById("daysDone").textContent =
-    data.days.length + " / 30";
-
-  renderDays();
-  renderHistory();
+  updateChallenge();
+  updateTransactions();
   updateAchievement();
 }
 
+function addSavings() {
+  const amountInput = document.getElementById("savingAmount");
 
-function renderDays() {
-
-  const container = document.getElementById("days");
-
-  container.innerHTML = "";
-
-  for (let i = 1; i <= 30; i++) {
-
-    const button = document.createElement("button");
-
-    button.className = "day";
-
-    if (data.days.includes(i)) {
-      button.classList.add("done");
-    }
-
-    button.innerHTML =
-      "<small>DAY</small><b>" + i + "</b>";
-
-    button.addEventListener("click", function () {
-
-      if (data.days.includes(i)) {
-
-        data.days = data.days.filter(
-          day => day !== i
-        );
-
-      } else {
-
-        data.days.push(i);
-
-      }
-
-      saveData();
-      updateDashboard();
-
-    });
-
-    container.appendChild(button);
+  if (!amountInput) {
+    openSavingsModal();
+    return;
   }
+
+  const amount = Number(amountInput.value);
+
+  if (!amount || amount <= 0) {
+    alert("Please enter a valid savings amount.");
+    return;
+  }
+
+  data.saved += amount;
+
+  data.transactions.unshift({
+    amount,
+    date: new Date().toLocaleDateString("en-NG"),
+    time: new Date().toLocaleTimeString("en-NG", {
+      hour: "2-digit",
+      minute: "2-digit"
+    })
+  });
+
+  saveData();
+  updateUI();
+
+  closeModal();
+
+  alert(
+    "Great job! 🎉 You saved " +
+    money(amount) +
+    "."
+  );
 }
 
+function openSavingsModal() {
+  const modal = document.getElementById("savingsModal");
 
-function renderHistory() {
+  if (modal) {
+    modal.classList.add("show");
 
-  const rows = document.getElementById("historyRows");
+    const input = document.getElementById("savingAmount");
 
-  const empty = document.getElementById("empty");
-
-  rows.innerHTML = "";
-
-  if (data.deposits.length === 0) {
-
-    empty.style.display = "block";
+    if (input) {
+      input.focus();
+    }
 
     return;
   }
 
-  empty.style.display = "none";
+  const amount = prompt("How much did you save today?");
 
-  const deposits =
-    [...data.deposits].reverse();
+  if (amount === null) return;
 
-  deposits.forEach(deposit => {
+  const value = Number(amount);
 
-    const row = document.createElement("tr");
+  if (!value || value <= 0) {
+    alert("Please enter a valid amount.");
+    return;
+  }
 
-    row.innerHTML = `
-      <td>${deposit.date}</td>
-      <td>${deposit.note || "Savings"}</td>
-      <td><strong>${money(deposit.amount)}</strong></td>
-    `;
+  data.saved += value;
 
-    rows.appendChild(row);
-
+  data.transactions.unshift({
+    amount: value,
+    date: new Date().toLocaleDateString("en-NG"),
+    time: new Date().toLocaleTimeString("en-NG", {
+      hour: "2-digit",
+      minute: "2-digit"
+    })
   });
+
+  saveData();
+  updateUI();
+
+  alert("Amazing! 🎉 You saved " + money(value));
 }
 
+function closeModal() {
+  const modal = document.getElementById("savingsModal");
 
-function updateAchievement() {
+  if (modal) {
+    modal.classList.remove("show");
+  }
 
-  const title =
-    document.getElementById("achievementTitle");
+  const input = document.getElementById("savingAmount");
 
-  const text =
-    document.getElementById("achievementText");
-
-  if (data.saved >= data.goal && data.goal > 0) {
-
-    title.textContent =
-      "Goal completed! 🎉";
-
-    text.textContent =
-      "Amazing! You reached your savings goal.";
-
-  } else if (data.saved > 0) {
-
-    title.textContent =
-      "You're making progress! 🌱";
-
-    text.textContent =
-      "Every deposit brings you closer to your goal.";
-
-  } else {
-
-    title.textContent =
-      "First step";
-
-    text.textContent =
-      "Add your first deposit to unlock your first achievement.";
-
+  if (input) {
+    input.value = "";
   }
 }
 
+function setGoal() {
+  const newGoal = prompt(
+    "Enter your new savings goal:",
+    data.goal
+  );
 
-/* ADD SAVINGS */
+  if (newGoal === null) return;
 
-document
-  .getElementById("depositForm")
-  .addEventListener("submit", function(event) {
+  const amount = Number(newGoal);
 
-    event.preventDefault();
+  if (!amount || amount <= 0) {
+    alert("Please enter a valid goal.");
+    return;
+  }
 
-    const amount =
-      Number(document.getElementById("amount").value);
+  data.goal = amount;
 
-    const note =
-      document.getElementById("note").value.trim();
+  saveData();
+  updateUI();
 
-    if (!amount || amount <= 0) {
-
-      alert("Please enter a valid amount.");
-
-      return;
-    }
-
-    data.saved += amount;
-
-    data.deposits.push({
-
-      amount: amount,
-
-      note: note,
-
-      date: new Date().toLocaleDateString(
-        "en-NG"
-      )
-
-    });
-
-    saveData();
-
-    this.reset();
-
-    updateDashboard();
-
-    alert(
-      "Savings added successfully! 🎉"
-    );
-
-});
-
-
-/* UPDATE GOAL */
-
-document
-  .getElementById("goalForm")
-  .addEventListener("submit", function(event) {
-
-    event.preventDefault();
-
-    const name =
-      document
-        .getElementById("goalInputName")
-        .value
-        .trim();
-
-    const amount =
-      Number(
-        document.getElementById("goalInput").value
-      );
-
-    if (!amount || amount <= 0) {
-
-      alert("Please enter a valid goal amount.");
-
-      return;
-    }
-
-    data.goal = amount;
-
-    if (name) {
-      data.goalName = name;
-    }
-
-    saveData();
-
-    updateDashboard();
-
-    alert(
-      "Your savings goal has been updated! 🎯"
-    );
-
-});
-
-
-/* QUICK CHALLENGE BUTTONS */
-
-document
-  .querySelectorAll("[data-goal]")
-  .forEach(button => {
-
-    button.addEventListener("click", function() {
-
-      const amount =
-        Number(this.dataset.goal);
-
-      data.goal = amount;
-
-      data.goalName =
-        "₦" +
-        amount.toLocaleString("en-NG") +
-        " Savings Challenge";
-
-      saveData();
-
-      updateDashboard();
-
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
-
-    });
-
-});
-
-
-/* ADD SAVINGS BUTTON */
-
-document
-  .getElementById("addTop")
-  .addEventListener("click", function() {
-
-    document
-      .getElementById("add")
-      .scrollIntoView({
-        behavior: "smooth"
-      });
-
-    setTimeout(function() {
-
-      document
-        .getElementById("amount")
-        .focus();
-
-    }, 500);
-
-});
-
-
-/* DARK MODE */
-
-document
-  .getElementById("themeBtn")
-  .addEventListener("click", function() {
-
-    data.dark = !data.dark;
-
-    document.body.classList.toggle(
-      "dark",
-      data.dark
-    );
-
-    this.textContent =
-      data.dark ? "☀" : "☾";
-
-    saveData();
-
-});
-
-
-/* RESET */
-
-document
-  .getElementById("reset")
-  .addEventListener("click", function() {
-
-    const confirmed =
-      confirm(
-        "Are you sure you want to reset all your savings data?"
-      );
-
-    if (!confirmed) return;
-
-    data = {
-      goal: 100000,
-      goalName: "My Savings Goal",
-      saved: 0,
-      deposits: [],
-      days: [],
-      dark: false
-    };
-
-    saveData();
-
-    document.body.classList.remove("dark");
-
-    document.getElementById("themeBtn").textContent =
-      "☾";
-
-    updateDashboard();
-
-});
-
-
-/* START */
-
-if (data.dark) {
-
-  document.body.classList.add("dark");
-
-  document.getElementById("themeBtn").textContent =
-    "☀";
-
+  alert("Your new goal is " + money(amount) + " 🎯");
 }
 
-document.getElementById("goalInput").value =
-  data.goal;
+function renameGoal() {
+  const name = prompt(
+    "What would you like to call your savings goal?",
+    data.goalName
+  );
 
-document.getElementById("goalInputName").value =
-  data.goalName;
+  if (name === null) return;
 
-updateDashboard();
+  const cleanName = name.trim();
+
+  if (!cleanName) {
+    alert("Please enter a goal name.");
+    return;
+  }
+
+  data.goalName = cleanName;
+
+  saveData();
+  updateUI();
+}
+
+function completeDay(day) {
+  const index = data.completedDays.indexOf(day);
+
+  if (index === -1) {
+    data.completedDays.push(day);
+    data.streak += 1;
+  } else {
+    data.completedDays.splice(index, 1);
+    data.streak = Math.max(0, data.streak - 1);
+  }
+
+  saveData();
+  updateUI();
+}
+
+function updateChallenge() {
+  const days = document.querySelectorAll("[data-day]");
+
+  days.forEach(dayElement => {
+    const day = Number(dayElement.dataset.day);
+
+    if (data.completedDays.includes(day)) {
+      dayElement.classList.add("completed");
+      dayElement.setAttribute("aria-pressed", "true");
+    } else {
+      dayElement.classList.remove("completed
