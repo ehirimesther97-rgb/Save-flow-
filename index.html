@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#17382c">
-  <title>SaveFlow — Save with purpose</title>
+  <meta name="theme-color" content="#176b4d">
+  <title>SaveFlow — Savings Challenge</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -18,47 +18,84 @@
 
   <nav>
     <a href="#dashboard">Dashboard</a>
-    <a href="#challenges">Challenges</a>
-    <a href="#history">History</a>
+    <a href="#challenge">Challenge</a>
+    <a href="#analytics">Analytics</a>
+    <a href="#achievements">Achievements</a>
   </nav>
 
-  <button id="themeBtn" class="theme-button">
+  <button id="themeBtn" class="icon-btn" aria-label="Toggle dark mode">
     ☾
   </button>
 
 </header>
 
 
-<main id="dashboard">
+<main>
 
-  <section class="welcome">
+  <!-- HERO -->
 
-    <div>
+  <section class="hero" id="dashboard">
+
+    <div class="hero-content">
 
       <span class="pill">
-        MY SAVINGS JOURNEY
+        YOUR MONEY • YOUR PROGRESS
       </span>
 
       <h1>
-        Small steps.
+        Small steps.<br>
         <span>Big savings.</span>
       </h1>
 
       <p>
-        Build a habit, hit your goals,
-        and celebrate every step.
+        Turn your savings goal into a simple daily habit
+        and watch your progress grow.
       </p>
+
+      <div class="hero-actions">
+
+        <button class="primary" id="addTop">
+          ＋ Add savings
+        </button>
+
+        <button class="secondary" id="customTop">
+          Create challenge
+        </button>
+
+      </div>
 
     </div>
 
-    <button class="primary" id="addTop">
-      ＋ Add savings
-    </button>
+
+    <div class="hero-progress">
+
+      <div
+        class="progress-ring"
+        id="ring"
+      >
+
+        <div class="ring-inner">
+
+          <strong id="percent">
+            0%
+          </strong>
+
+          <span>
+            complete
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
 
   </section>
 
 
-  <section class="hero-card">
+  <!-- CURRENT GOAL -->
+
+  <section class="goal-card">
 
     <div>
 
@@ -71,13 +108,19 @@
       </h2>
 
       <p>
-        <b id="savedBig">₦0</b>
+        <strong id="savedBig">
+          ₦0
+        </strong>
+
         saved of
-        <span id="goalBig">₦100,000</span>
+
+        <span id="goalBig">
+          ₦100,000
+        </span>
       </p>
 
-      <div class="progress-bar">
-        <i id="bar"></i>
+      <div class="progress-track">
+        <div id="bar"></div>
       </div>
 
       <small id="progressText">
@@ -86,206 +129,290 @@
 
     </div>
 
+    <div class="goal-date">
 
-    <div class="progress-ring" id="ring">
+      <span>Target</span>
 
-      <div>
-        <b id="percent">0%</b>
-        <small>complete</small>
-      </div>
+      <strong id="targetDate">
+        No date set
+      </strong>
 
     </div>
 
   </section>
 
+
+  <!-- STATS -->
 
   <section class="stats">
 
-    <div class="stat">
-      <span>Saved</span>
-      <b id="saved">₦0</b>
+    <div class="stat-card">
+
+      <span>Saved so far</span>
+
+      <strong id="saved">
+        ₦0
+      </strong>
+
     </div>
 
-    <div class="stat">
+
+    <div class="stat-card">
+
       <span>Remaining</span>
-      <b id="remaining">₦100,000</b>
-    </div>
 
-    <div class="stat">
-      <span>Streak</span>
-      <b id="streak">0 🔥</b>
-    </div>
-
-    <div class="stat">
-      <span>Deposits</span>
-      <b id="count">0</b>
-    </div>
-
-  </section>
-
-
-  <section class="section" id="challenges">
-
-    <div class="section-title">
-
-      <div>
-
-        <h2>Choose a challenge</h2>
-
-        <p>
-          Pick a target and start building your habit.
-        </p>
-
-      </div>
-
-    </div>
-
-
-    <div class="challenge-options">
-
-      <button data-goal="10000">
-        ₦10,000
-        <small>Starter</small>
-      </button>
-
-      <button data-goal="50000">
-        ₦50,000
-        <small>Steady</small>
-      </button>
-
-      <button data-goal="100000">
+      <strong id="remaining">
         ₦100,000
-        <small>Popular</small>
-      </button>
+      </strong>
 
-      <button data-goal="500000">
-        ₦500,000
-        <small>Ambitious</small>
-      </button>
+    </div>
+
+
+    <div class="stat-card">
+
+      <span>Current streak</span>
+
+      <strong id="streak">
+        0 🔥
+      </strong>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <span>Total deposits</span>
+
+      <strong id="count">
+        0
+      </strong>
 
     </div>
 
   </section>
 
+
+  <!-- QUICK CHALLENGES -->
 
   <section class="section">
 
-    <div class="section-title">
+    <div class="section-heading">
 
       <div>
 
-        <h2>30-Day Challenge</h2>
+        <span class="eyebrow">
+          QUICK START
+        </span>
+
+        <h2>
+          Choose a savings goal
+        </h2>
 
         <p>
-          Tap each day after you save.
+          Pick a challenge and start saving today.
         </p>
 
       </div>
 
-      <span class="pill" id="daysDone">
-        0 / 30
-      </span>
-
     </div>
 
 
-    <div class="days" id="days"></div>
+    <div class="challenge-grid">
+
+      <button
+        class="challenge-card"
+        data-goal="10000"
+        data-days="30"
+      >
+
+        <span>🌱</span>
+
+        <strong>
+          ₦10,000
+        </strong>
+
+        <small>
+          30-day starter
+        </small>
+
+      </button>
+
+
+      <button
+        class="challenge-card"
+        data-goal="50000"
+        data-days="30"
+      >
+
+        <span>🚀</span>
+
+        <strong>
+          ₦50,000
+        </strong>
+
+        <small>
+          30-day challenge
+        </small>
+
+      </button>
+
+
+      <button
+        class="challenge-card featured"
+        data-goal="100000"
+        data-days="30"
+      >
+
+        <span>🔥</span>
+
+        <strong>
+          ₦100,000
+        </strong>
+
+        <small>
+          Popular challenge
+        </small>
+
+      </button>
+
+
+      <button
+        class="challenge-card"
+        data-goal="500000"
+        data-days="90"
+      >
+
+        <span>🏆</span>
+
+        <strong>
+          ₦500,000
+        </strong>
+
+        <small>
+          90-day challenge
+        </small>
+
+      </button>
+
+    </div>
 
   </section>
 
 
-  <section class="forms">
+  <!-- CUSTOM CHALLENGE -->
 
-    <div class="panel" id="add">
+  <section
+    class="section custom-section"
+    id="challenge"
+  >
 
-      <h2>Add savings</h2>
+    <div class="section-heading">
 
-      <p>
-        Record a deposit and keep your progress moving.
-      </p>
+      <div>
 
+        <span class="eyebrow">
+          MAKE IT YOURS
+        </span>
 
-      <form id="depositForm">
+        <h2>
+          Create a custom challenge
+        </h2>
 
-        <label>
-          Amount (₦)
+        <p>
+          Set your own target and deadline.
+        </p>
 
-          <input
-            id="amount"
-            type="number"
-            min="1"
-            placeholder="5,000"
-            required
-          >
-
-        </label>
-
-
-        <label>
-          Note
-
-          <input
-            id="note"
-            maxlength="50"
-            placeholder="Weekly savings"
-          >
-
-        </label>
-
-
-        <button
-          class="primary full"
-          type="submit"
-        >
-          Save deposit
-        </button>
-
-      </form>
+      </div>
 
     </div>
 
 
     <div class="panel">
 
-      <h2>Goal settings</h2>
+      <form id="customForm">
 
-      <p>
-        Give your goal a name and target.
-      </p>
+        <div class="form-grid">
 
+          <label>
+            Challenge name
 
-      <form id="goalForm">
+            <input
+              id="customName"
+              type="text"
+              maxlength="40"
+              placeholder="My Dream Fund"
+              required
+            >
 
-        <label>
-          Goal name
-
-          <input
-            id="goalInputName"
-            maxlength="35"
-            placeholder="Emergency fund"
-          >
-
-        </label>
+          </label>
 
 
-        <label>
-          Goal amount (₦)
+          <label>
+            Goal amount (₦)
 
-          <input
-            id="goalInput"
-            type="number"
-            min="1"
-            required
-          >
+            <input
+              id="customGoal"
+              type="number"
+              min="1"
+              placeholder="100000"
+              required
+            >
 
-        </label>
+          </label>
+
+
+          <label>
+            Duration
+
+            <select id="customDays">
+
+              <option value="7">
+                7 days
+              </option>
+
+              <option value="14">
+                14 days
+              </option>
+
+              <option value="30" selected>
+                30 days
+              </option>
+
+              <option value="60">
+                60 days
+              </option>
+
+              <option value="90">
+                90 days
+              </option>
+
+              <option value="180">
+                180 days
+              </option>
+
+            </select>
+
+          </label>
+
+
+          <label>
+            Target date
+
+            <input
+              id="customDate"
+              type="date"
+            >
+
+          </label>
+
+        </div>
 
 
         <button
-          class="secondary full"
+          class="primary"
           type="submit"
         >
-          Update goal
+          Create my challenge 🎯
         </button>
 
       </form>
@@ -295,13 +422,231 @@
   </section>
 
 
-  <section class="section" id="history">
+  <!-- DAILY CHALLENGE -->
 
-    <div class="section-title">
+  <section class="section">
+
+    <div class="section-heading challenge-heading">
 
       <div>
 
-        <h2>Recent activity</h2>
+        <span class="eyebrow">
+          DAILY HABIT
+        </span>
+
+        <h2 id="challengeTitle">
+          30-Day Savings Challenge
+        </h2>
+
+        <p>
+          Tap a day when you've completed it.
+        </p>
+
+      </div>
+
+      <span
+        class="pill"
+        id="daysDone"
+      >
+        0 / 30
+      </span>
+
+    </div>
+
+
+    <div
+      class="days"
+      id="days"
+    ></div>
+
+  </section>
+
+
+  <!-- ANALYTICS -->
+
+  <section
+    class="section"
+    id="analytics"
+  >
+
+    <div class="section-heading">
+
+      <div>
+
+        <span class="eyebrow">
+          YOUR PROGRESS
+        </span>
+
+        <h2>
+          Savings analytics
+        </h2>
+
+        <p>
+          See how your savings are growing.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="analytics-grid">
+
+      <div class="panel chart-panel">
+
+        <div class="chart-header">
+
+          <strong>
+            Savings growth
+          </strong>
+
+          <span id="chartTotal">
+            ₦0
+          </span>
+
+        </div>
+
+        <div
+          class="chart"
+          id="chart"
+        ></div>
+
+      </div>
+
+
+      <div class="panel">
+
+        <h3>
+          Savings pace
+        </h3>
+
+        <div class="pace">
+
+          <div>
+            <span>Average deposit</span>
+            <strong id="averageDeposit">
+              ₦0
+            </strong>
+          </div>
+
+          <div>
+            <span>Daily target</span>
+            <strong id="dailyTarget">
+              ₦0
+            </strong>
+          </div>
+
+          <div>
+            <span>Days completed</span>
+            <strong id="completedDays">
+              0
+            </strong>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ADD SAVINGS -->
+
+  <section
+    class="section"
+    id="add"
+  >
+
+    <div class="section-heading">
+
+      <div>
+
+        <span class="eyebrow">
+          KEEP GOING
+        </span>
+
+        <h2>
+          Add savings
+        </h2>
+
+        <p>
+          Record your latest deposit.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="panel">
+
+      <form id="depositForm">
+
+        <div class="form-grid">
+
+          <label>
+            Amount (₦)
+
+            <input
+              id="amount"
+              type="number"
+              min="1"
+              placeholder="5000"
+              required
+            >
+
+          </label>
+
+
+          <label>
+            Note
+
+            <input
+              id="note"
+              type="text"
+              maxlength="50"
+              placeholder="Weekly savings"
+            >
+
+          </label>
+
+        </div>
+
+
+        <button
+          class="primary"
+          type="submit"
+        >
+          Save deposit 💰
+        </button>
+
+      </form>
+
+    </div>
+
+  </section>
+
+
+  <!-- ACTIVITY -->
+
+  <section
+    class="section"
+    id="history"
+  >
+
+    <div class="section-heading">
+
+      <div>
+
+        <span class="eyebrow">
+          HISTORY
+        </span>
+
+        <h2>
+          Recent activity
+        </h2>
 
         <p>
           Your latest savings deposits.
@@ -309,8 +654,11 @@
 
       </div>
 
-      <button class="danger" id="reset">
-        Reset
+      <button
+        class="danger"
+        id="reset"
+      >
+        Reset data
       </button>
 
     </div>
@@ -335,8 +683,11 @@
       </table>
 
 
-      <div class="empty" id="empty">
-        Your savings activity will appear here.
+      <div
+        class="empty"
+        id="empty"
+      >
+        No savings activity yet.
       </div>
 
     </div>
@@ -344,29 +695,89 @@
   </section>
 
 
-  <section class="section">
+  <!-- ACHIEVEMENTS -->
 
-    <div class="achievement">
+  <section
+    class="section"
+    id="achievements"
+  >
 
-      <div class="trophy">
-        🏆
-      </div>
+    <div class="section-heading">
 
       <div>
 
         <span class="eyebrow">
-          YOUR ACHIEVEMENT
+          ACHIEVEMENTS
         </span>
 
-        <h2 id="achievementTitle">
-          First step
+        <h2>
+          Your milestones
         </h2>
 
-        <p id="achievementText">
-          Add your first deposit to unlock your first achievement.
+        <p>
+          Keep saving to unlock badges.
         </p>
 
       </div>
+
+    </div>
+
+
+    <div
+      class="achievement-grid"
+      id="achievementGrid"
+    ></div>
+
+  </section>
+
+
+  <!-- GOAL SETTINGS -->
+
+  <section class="section">
+
+    <div class="panel settings-panel">
+
+      <div>
+
+        <span class="eyebrow">
+          SETTINGS
+        </span>
+
+        <h2>
+          Goal settings
+        </h2>
+
+        <p>
+          Update your current savings goal.
+        </p>
+
+      </div>
+
+
+      <form id="goalForm">
+
+        <input
+          id="goalInputName"
+          type="text"
+          placeholder="Goal name"
+        >
+
+        <input
+          id="goalInput"
+          type="number"
+          min="1"
+          placeholder="Goal amount"
+          required
+        >
+
+        <button
+          class="secondary"
+          type="submit"
+        >
+          Update goal
+        </button>
+
+      </form>
 
     </div>
 
@@ -376,11 +787,23 @@
 
 
 <footer>
-  SaveFlow © 2026 • Save with purpose.
+
+  <strong>
+    Save<span>Flow</span>
+  </strong>
+
+  <p>
+    Save with purpose. Grow with consistency.
+  </p>
+
+  <small>
+    SaveFlow © 2026
+  </small>
+
 </footer>
 
 
 <script src="app.js"></script>
 
 </body>
-  </html>
+</html>
