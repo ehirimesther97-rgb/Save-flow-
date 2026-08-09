@@ -1,604 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#17382c">
+  <title>SaveFlow — Save with purpose</title>
+  <link rel="stylesheet" href="style.css">
+</head>
 
-const STORAGE_KEY = "saveflow-v2";
+<body>
 
-let data =
-  JSON.parse(
-    localStorage.getItem(STORAGE_KEY)
-  ) || {
+<header class="navbar">
 
-    goal: 100000,
+  <a href="#" class="logo">
+    Save<span>Flow</span>
+  </a>
 
-    goalName:
-      "My Savings Goal",
+  <nav>
+    <a href="#dashboard">Dashboard</a>
+    <a href="#challenges">Challenges</a>
+    <a href="#history">History</a>
+  </nav>
 
-    saved: 0,
+  <button id="themeBtn" class="theme-button">
+    ☾
+  </button>
 
-    days:
-      Array(30).fill(false),
+</header>
 
-    deposits: [],
 
-    dark: false
-  };
+<main id="dashboard">
 
+  <section class="welcome">
 
-function money(amount) {
+    <div>
 
-  return new Intl.NumberFormat(
-    "en-NG",
-    {
-      style: "currency",
-      currency: "NGN",
-      maximumFractionDigits: 0
-    }
-  ).format(amount);
+      <span class="pill">
+        MY SAVINGS JOURNEY
+      </span>
 
-}
+      <h1>
+        Small steps.
+        <span>Big savings.</span>
+      </h1>
 
+      <p>
+        Build a habit, hit your goals,
+        and celebrate every step.
+      </p>
 
-function saveData() {
+    </div>
 
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(data)
-  );
+    <button class="primary" id="addTop">
+      ＋ Add savings
+    </button>
 
-  render();
+  </section>
 
-}
 
+  <section class="hero-card">
 
-function escapeHTML(text) {
+    <div>
 
-  return String(text || "")
-    .replace(
-      /[&<>"']/g,
-      character => ({
+      <span class="eyebrow">
+        CURRENT GOAL
+      </span>
 
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;"
+      <h2 id="goalName">
+        My Savings Goal
+      </h2>
 
-      })[character]
-    );
+      <p>
+        <b id="savedBig">₦0</b>
+        saved of
+        <span id="goalBig">₦100,000</span>
+      </p>
 
-}
+      <div class="progress-bar">
+        <i id="bar"></i>
+      </div>
 
+      <small id="progressText">
+        0% complete • ₦100,000 remaining
+      </small>
 
-function render() {
+    </div>
 
-  document.body.classList.toggle(
-    "dark",
-    data.dark
-  );
 
+    <div class="progress-ring" id="ring">
 
-  document.getElementById(
-    "goalName"
-  ).textContent =
-    data.goalName ||
-    "My Savings Goal";
+      <div>
+        <b id="percent">0%</b>
+        <small>complete</small>
+      </div>
 
+    </div>
 
-  document.getElementById(
-    "goalBig"
-  ).textContent =
-    money(data.goal);
+  </section>
 
 
-  document.getElementById(
-    "savedBig"
-  ).textContent =
-    money(data.saved);
+  <section class="stats">
 
+    <div class="stat">
+      <span>Saved</span>
+      <b id="saved">₦0</b>
+    </div>
 
-  document.getElementById(
-    "saved"
-  ).textContent =
-    money(data.saved);
+    <div class="stat">
+      <span>Remaining</span>
+      <b id="remaining">₦100,000</b>
+    </div>
 
+    <div class="stat">
+      <span>Streak</span>
+      <b id="streak">0 🔥</b>
+    </div>
 
-  document.getElementById(
-    "remaining"
-  ).textContent =
-    money(
-      Math.max(
-        0,
-        data.goal - data.saved
-      )
-    );
+    <div class="stat">
+      <span>Deposits</span>
+      <b id="count">0</b>
+    </div>
 
+  </section>
 
-  const percentage =
-    Math.min(
-      100,
-      Math.round(
-        (data.saved / data.goal) * 100
-      )
-    );
 
+  <section class="section" id="challenges">
 
-  document.getElementById(
-    "percent"
-  ).textContent =
-    percentage + "%";
+    <div class="section-title">
 
+      <div>
 
-  document.getElementById(
-    "bar"
-  ).style.width =
-    percentage + "%";
+        <h2>Choose a challenge</h2>
 
+        <p>
+          Pick a target and start building your habit.
+        </p>
 
-  document.getElementById(
-    "ring"
-  ).style.setProperty(
-    "--angle",
-    percentage * 3.6 + "deg"
-  );
+      </div>
 
+    </div>
 
-  document.getElementById(
-    "progressText"
-  ).textContent =
-    `${percentage}% complete • ${
-      money(
-        Math.max(
-          0,
-          data.goal - data.saved
-        )
-      )
-    } remaining`;
 
+    <div class="challenge-options">
 
-  let streak = 0;
+      <button data-goal="10000">
+        ₦10,000
+        <small>Starter</small>
+      </button>
 
-  for (
-    let i = 29;
-    i >= 0 && data.days[i];
-    i--
-  ) {
+      <button data-goal="50000">
+        ₦50,000
+        <small>Steady</small>
+      </button>
 
-    streak++;
+      <button data-goal="100000">
+        ₦100,000
+        <small>Popular</small>
+      </button>
 
-  }
+      <button data-goal="500000">
+        ₦500,000
+        <small>Ambitious</small>
+      </button>
 
+    </div>
 
-  document.getElementById(
-    "streak"
-  ).textContent =
-    streak + " 🔥";
+  </section>
 
 
-  document.getElementById(
-    "count"
-  ).textContent =
-    data.deposits.length;
+  <section class="section">
 
+    <div class="section-title">
 
-  document.getElementById(
-    "daysDone"
-  ).textContent =
-    data.days.filter(Boolean).length +
-    " / 30";
+      <div>
 
+        <h2>30-Day Challenge</h2>
 
-  document.getElementById(
-    "goalInput"
-  ).value =
-    data.goal;
+        <p>
+          Tap each day after you save.
+        </p>
 
+      </div>
 
-  document.getElementById(
-    "goalInputName"
-  ).value =
-    data.goalName;
+      <span class="pill" id="daysDone">
+        0 / 30
+      </span>
 
+    </div>
 
-  const days =
-    document.getElementById("days");
 
-  days.innerHTML = "";
+    <div class="days" id="days"></div>
 
+  </section>
 
-  data.days.forEach(
-    (completed,index) => {
 
-      const element =
-        document.createElement("div");
+  <section class="forms">
 
-      element.className =
-        "day" +
-        (completed ? " done" : "");
+    <div class="panel" id="add">
 
+      <h2>Add savings</h2>
 
-      element.innerHTML = `
+      <p>
+        Record a deposit and keep your progress moving.
+      </p>
 
-        <small>
-          DAY ${index + 1}
-        </small>
 
-        <b>
-          ${
-            completed
-              ? "✓ Done"
-              : "Save"
-          }
-        </b>
+      <form id="depositForm">
 
-      `;
+        <label>
+          Amount (₦)
 
+          <input
+            id="amount"
+            type="number"
+            min="1"
+            placeholder="5,000"
+            required
+          >
 
-      element.onclick =
-        function() {
+        </label>
 
-          data.days[index] =
-            !data.days[index];
 
-          saveData();
+        <label>
+          Note
 
-        };
+          <input
+            id="note"
+            maxlength="50"
+            placeholder="Weekly savings"
+          >
 
+        </label>
 
-      days.appendChild(element);
 
-    }
-  );
+        <button
+          class="primary full"
+          type="submit"
+        >
+          Save deposit
+        </button>
 
+      </form>
 
-  const history =
-    document.getElementById(
-      "historyRows"
-    );
+    </div>
 
-  history.innerHTML = "";
 
+    <div class="panel">
 
-  document.getElementById(
-    "empty"
-  ).style.display =
-    data.deposits.length
-      ? "none"
-      : "block";
+      <h2>Goal settings</h2>
 
+      <p>
+        Give your goal a name and target.
+      </p>
 
-  [...data.deposits]
-    .reverse()
-    .forEach(
-      deposit => {
 
-        const row =
-          document.createElement("tr");
+      <form id="goalForm">
 
+        <label>
+          Goal name
 
-        row.innerHTML = `
+          <input
+            id="goalInputName"
+            maxlength="35"
+            placeholder="Emergency fund"
+          >
 
-          <td>
-            ${escapeHTML(
-              deposit.date
-            )}
-          </td>
+        </label>
 
-          <td>
-            ${escapeHTML(
-              deposit.note ||
-              "Savings"
-            )}
-          </td>
 
-          <td>
-            <b>
-              ${money(
-                deposit.amount
-              )}
-            </b>
-          </td>
+        <label>
+          Goal amount (₦)
 
-        `;
+          <input
+            id="goalInput"
+            type="number"
+            min="1"
+            required
+          >
 
+        </label>
 
-        history.appendChild(row);
 
-      }
-    );
+        <button
+          class="secondary full"
+          type="submit"
+        >
+          Update goal
+        </button>
 
+      </form>
 
-  let title =
-    "First step";
+    </div>
 
-  let text =
-    "Add your first deposit to unlock your first achievement.";
+  </section>
 
 
-  if (data.saved >= 1000) {
+  <section class="section" id="history">
 
-    title =
-      "First ₦1,000";
+    <div class="section-title">
 
-    text =
-      "You have started your savings journey.";
+      <div>
 
-  }
+        <h2>Recent activity</h2>
 
+        <p>
+          Your latest savings deposits.
+        </p>
 
-  if (data.saved >= 10000) {
+      </div>
 
-    title =
-      "₦10K Saver";
+      <button class="danger" id="reset">
+        Reset
+      </button>
 
-    text =
-      "Amazing! You crossed your first major milestone.";
+    </div>
 
-  }
 
+    <div class="panel table-wrap">
 
-  if (
-    data.days.filter(Boolean).length >= 7
-  ) {
+      <table>
 
-    title =
-      "7-Day Streak 🔥";
+        <thead>
 
-    text =
-      "You're building a real savings habit. Keep going!";
+          <tr>
+            <th>Date</th>
+            <th>Note</th>
+            <th>Amount</th>
+          </tr>
 
-  }
+        </thead>
 
+        <tbody id="historyRows"></tbody>
 
-  if (percentage >= 100) {
+      </table>
 
-    title =
-      "Goal Crusher 🏆";
 
-    text =
-      "You reached your savings goal! Celebrate this win.";
+      <div class="empty" id="empty">
+        Your savings activity will appear here.
+      </div>
 
-  }
+    </div>
 
+  </section>
 
-  document.getElementById(
-    "achievementTitle"
-  ).textContent =
-    title;
 
+  <section class="section">
 
-  document.getElementById(
-    "achievementText"
-  ).textContent =
-    text;
+    <div class="achievement">
 
-}
+      <div class="trophy">
+        🏆
+      </div>
 
+      <div>
 
-/* ADD SAVINGS */
+        <span class="eyebrow">
+          YOUR ACHIEVEMENT
+        </span>
 
-document
-  .getElementById(
-    "depositForm"
-  )
-  .addEventListener(
-    "submit",
-    function(event) {
+        <h2 id="achievementTitle">
+          First step
+        </h2>
 
-      event.preventDefault();
+        <p id="achievementText">
+          Add your first deposit to unlock your first achievement.
+        </p>
 
+      </div>
 
-      const amount =
-        Number(
-          document.getElementById(
-            "amount"
-          ).value
-        );
+    </div>
 
+  </section>
 
-      const note =
-        document.getElementById(
-          "note"
-        ).value.trim();
+</main>
 
 
-      if (
-        !amount ||
-        amount <= 0
-      ) {
+<footer>
+  SaveFlow © 2026 • Save with purpose.
+</footer>
 
-        return;
 
-      }
+<script src="app.js"></script>
 
-
-      data.saved += amount;
-
-
-      data.deposits.push({
-
-        amount: amount,
-
-        note: note,
-
-        date:
-          new Date()
-            .toLocaleDateString(
-              "en-NG",
-              {
-                day: "2-digit",
-                month: "short",
-                year: "numeric"
-              }
-            )
-
-      });
-
-
-      event.target.reset();
-
-
-      saveData();
-
-    }
-  );
-
-
-/* UPDATE GOAL */
-
-document
-  .getElementById(
-    "goalForm"
-  )
-  .addEventListener(
-    "submit",
-    function(event) {
-
-      event.preventDefault();
-
-
-      const goal =
-        Number(
-          document.getElementById(
-            "goalInput"
-          ).value
-        );
-
-
-      const name =
-        document.getElementById(
-          "goalInputName"
-        ).value.trim();
-
-
-      if (goal > 0) {
-
-        data.goal =
-          goal;
-
-        data.goalName =
-          name ||
-          "My Savings Goal";
-
-
-        saveData();
-
-      }
-
-    }
-  );
-
-
-/* CHALLENGE BUTTONS */
-
-document
-  .querySelectorAll(
-    "[data-goal]"
-  )
-  .forEach(
-    button => {
-
-      button.onclick =
-        function() {
-
-          data.goal =
-            Number(
-              button.dataset.goal
-            );
-
-
-          data.goalName =
-            button.textContent
-              .replace(
-                /\s+/g,
-                " "
-              )
-              .trim() +
-            " Challenge";
-
-
-          saveData();
-
-
-          location.hash =
-            "dashboard";
-
-        };
-
-    }
-  );
-
-
-/* ADD SAVINGS BUTTON */
-
-document
-  .getElementById(
-    "addTop"
-  )
-  .onclick =
-  function() {
-
-    location.hash =
-      "add";
-
-  };
-
-
-/* DARK MODE */
-
-document
-  .getElementById(
-    "themeBtn"
-  )
-  .onclick =
-  function() {
-
-    data.dark =
-      !data.dark;
-
-    saveData();
-
-  };
-
-
-/* RESET */
-
-document
-  .getElementById(
-    "reset"
-  )
-  .onclick =
-  function() {
-
-    if (
-      confirm(
-        "Reset all SaveFlow progress?"
-      )
-    ) {
-
-      data = {
-
-        goal: 100000,
-
-        goalName:
-          "My Savings Goal",
-
-        saved: 0,
-
-        days:
-          Array(30).fill(false),
-
-        deposits: [],
-
-        dark: data.dark
-
-      };
-
-
-      saveData();
-
-    }
-
-  };
-
-
-/* START */
-
-render();
+</body>
+  </html>
