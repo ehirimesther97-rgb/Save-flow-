@@ -1,287 +1,604 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>SaveFlow — Savings Challenge</title>
+const STORAGE_KEY = "saveflow-v2";
 
-  <link rel="stylesheet" href="style.css">
-</head>
+let data =
+  JSON.parse(
+    localStorage.getItem(STORAGE_KEY)
+  ) || {
 
-<body>
+    goal: 100000,
 
-  <header class="navbar">
-    <div class="logo">
-      Save<span>Flow</span>
-    </div>
+    goalName:
+      "My Savings Goal",
 
-    <div class="badge">
-      Savings Challenge
-    </div>
-  </header>
+    saved: 0,
 
-  <main>
+    days:
+      Array(30).fill(false),
 
-    <!-- HERO -->
-    <section class="hero">
+    deposits: [],
 
-      <div class="hero-content">
+    dark: false
+  };
 
-        <div class="mini-badge">
-          YOUR MONEY • YOUR PROGRESS
-        </div>
 
-        <h1>
-          Small steps.<br>
-          Big savings.
-        </h1>
+function money(amount) {
 
-        <p>
-          Set your savings goal, complete your challenge,
-          and watch your money grow one step at a time.
-        </p>
+  return new Intl.NumberFormat(
+    "en-NG",
+    {
+      style: "currency",
+      currency: "NGN",
+      maximumFractionDigits: 0
+    }
+  ).format(amount);
 
-        <a href="#add-savings" class="primary-button">
-          Add Savings
-        </a>
+}
 
-      </div>
 
-      <div class="progress-ring" id="progressRing">
+function saveData() {
 
-        <div class="ring-inner">
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(data)
+  );
 
-          <strong id="percentage">
-            0%
-          </strong>
+  render();
 
-          <span>
-            of goal
-          </span>
+}
 
-        </div>
 
-      </div>
+function escapeHTML(text) {
 
-    </section>
+  return String(text || "")
+    .replace(
+      /[&<>"']/g,
+      character => ({
 
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
 
-    <!-- STATISTICS -->
-    <section class="stats">
+      })[character]
+    );
 
-      <div class="stat-card">
-        <span>Savings Goal</span>
-        <strong id="goal">
-          ₦100,000
-        </strong>
-      </div>
+}
 
-      <div class="stat-card">
-        <span>Saved So Far</span>
-        <strong id="saved">
-          ₦0
-        </strong>
-      </div>
 
-      <div class="stat-card">
-        <span>Remaining</span>
-        <strong id="remaining">
-          ₦100,000
-        </strong>
-      </div>
+function render() {
 
-      <div class="stat-card">
-        <span>Streak</span>
-        <strong id="streak">
-          0 days 🔥
-        </strong>
-      </div>
+  document.body.classList.toggle(
+    "dark",
+    data.dark
+  );
 
-    </section>
 
+  document.getElementById(
+    "goalName"
+  ).textContent =
+    data.goalName ||
+    "My Savings Goal";
 
-    <!-- CHALLENGE -->
-    <section class="section">
 
-      <div class="section-heading">
+  document.getElementById(
+    "goalBig"
+  ).textContent =
+    money(data.goal);
 
-        <div>
-          <h2>
-            30-Day Savings Challenge
-          </h2>
 
-          <p>
-            Tap a day when you've completed it.
-          </p>
-        </div>
+  document.getElementById(
+    "savedBig"
+  ).textContent =
+    money(data.saved);
 
-      </div>
 
-      <div
-        class="challenge-card"
-        id="challenge"
-      ></div>
+  document.getElementById(
+    "saved"
+  ).textContent =
+    money(data.saved);
 
-    </section>
 
+  document.getElementById(
+    "remaining"
+  ).textContent =
+    money(
+      Math.max(
+        0,
+        data.goal - data.saved
+      )
+    );
 
-    <!-- ADD SAVINGS -->
-    <section
-      class="forms"
-      id="add-savings"
-    >
 
-      <div class="form-card">
+  const percentage =
+    Math.min(
+      100,
+      Math.round(
+        (data.saved / data.goal) * 100
+      )
+    );
 
-        <h2>
-          Add Savings
-        </h2>
 
-        <p>
-          Record money you've saved.
-        </p>
+  document.getElementById(
+    "percent"
+  ).textContent =
+    percentage + "%";
 
-        <form id="depositForm">
 
-          <label>
-            Amount (₦)
-          </label>
+  document.getElementById(
+    "bar"
+  ).style.width =
+    percentage + "%";
 
-          <input
-            id="amount"
-            type="number"
-            placeholder="Example: 5,000"
-            min="1"
-            required
-          >
 
-          <label>
-            Note
-          </label>
+  document.getElementById(
+    "ring"
+  ).style.setProperty(
+    "--angle",
+    percentage * 3.6 + "deg"
+  );
 
-          <input
-            id="note"
-            type="text"
-            placeholder="Example: Weekly savings"
-            maxlength="50"
-          >
 
-          <button
-            type="submit"
-            class="primary-button full"
-          >
-            Add to Savings
-          </button>
+  document.getElementById(
+    "progressText"
+  ).textContent =
+    `${percentage}% complete • ${
+      money(
+        Math.max(
+          0,
+          data.goal - data.saved
+        )
+      )
+    } remaining`;
 
-        </form>
 
-      </div>
+  let streak = 0;
 
+  for (
+    let i = 29;
+    i >= 0 && data.days[i];
+    i--
+  ) {
 
-      <!-- GOAL -->
-      <div class="form-card">
+    streak++;
 
-        <h2>
-          Savings Goal
-        </h2>
+  }
 
-        <p>
-          Choose how much you want to save.
-        </p>
 
-        <form id="goalForm">
+  document.getElementById(
+    "streak"
+  ).textContent =
+    streak + " 🔥";
 
-          <label>
-            Goal Amount (₦)
-          </label>
 
-          <input
-            id="goalInput"
-            type="number"
-            min="1"
-            required
-          >
+  document.getElementById(
+    "count"
+  ).textContent =
+    data.deposits.length;
 
-          <button
-            type="submit"
-            class="primary-button full"
-          >
-            Update Goal
-          </button>
 
-        </form>
+  document.getElementById(
+    "daysDone"
+  ).textContent =
+    data.days.filter(Boolean).length +
+    " / 30";
 
-      </div>
 
-    </section>
+  document.getElementById(
+    "goalInput"
+  ).value =
+    data.goal;
 
 
-    <!-- HISTORY -->
-    <section class="section">
+  document.getElementById(
+    "goalInputName"
+  ).value =
+    data.goalName;
 
-      <div class="section-heading">
 
-        <div>
-          <h2>
-            Savings History
-          </h2>
+  const days =
+    document.getElementById("days");
 
-          <p>
-            Your recent deposits.
-          </p>
-        </div>
+  days.innerHTML = "";
 
-        <button
-          class="reset-button"
-          id="reset"
-        >
-          Reset
-        </button>
 
-      </div>
+  data.days.forEach(
+    (completed,index) => {
 
+      const element =
+        document.createElement("div");
 
-      <div class="history-card">
+      element.className =
+        "day" +
+        (completed ? " done" : "");
 
-        <table>
 
-          <thead>
+      element.innerHTML = `
 
-            <tr>
-              <th>Date</th>
-              <th>Note</th>
-              <th>Amount</th>
-            </tr>
+        <small>
+          DAY ${index + 1}
+        </small>
 
-          </thead>
+        <b>
+          ${
+            completed
+              ? "✓ Done"
+              : "Save"
+          }
+        </b>
 
-          <tbody id="history"></tbody>
+      `;
 
-        </table>
 
-        <div
-          class="empty"
-          id="empty"
-        >
-          No savings recorded yet.
-        </div>
+      element.onclick =
+        function() {
 
-      </div>
+          data.days[index] =
+            !data.days[index];
 
-    </section>
+          saveData();
 
-  </main>
+        };
 
 
-  <footer>
-    <p>
-      SaveFlow © 2026 — Your savings, your progress.
-    </p>
-  </footer>
+      days.appendChild(element);
 
+    }
+  );
 
-  <script src="app.js"></script>
 
-</body>
-</html>
+  const history =
+    document.getElementById(
+      "historyRows"
+    );
+
+  history.innerHTML = "";
+
+
+  document.getElementById(
+    "empty"
+  ).style.display =
+    data.deposits.length
+      ? "none"
+      : "block";
+
+
+  [...data.deposits]
+    .reverse()
+    .forEach(
+      deposit => {
+
+        const row =
+          document.createElement("tr");
+
+
+        row.innerHTML = `
+
+          <td>
+            ${escapeHTML(
+              deposit.date
+            )}
+          </td>
+
+          <td>
+            ${escapeHTML(
+              deposit.note ||
+              "Savings"
+            )}
+          </td>
+
+          <td>
+            <b>
+              ${money(
+                deposit.amount
+              )}
+            </b>
+          </td>
+
+        `;
+
+
+        history.appendChild(row);
+
+      }
+    );
+
+
+  let title =
+    "First step";
+
+  let text =
+    "Add your first deposit to unlock your first achievement.";
+
+
+  if (data.saved >= 1000) {
+
+    title =
+      "First ₦1,000";
+
+    text =
+      "You have started your savings journey.";
+
+  }
+
+
+  if (data.saved >= 10000) {
+
+    title =
+      "₦10K Saver";
+
+    text =
+      "Amazing! You crossed your first major milestone.";
+
+  }
+
+
+  if (
+    data.days.filter(Boolean).length >= 7
+  ) {
+
+    title =
+      "7-Day Streak 🔥";
+
+    text =
+      "You're building a real savings habit. Keep going!";
+
+  }
+
+
+  if (percentage >= 100) {
+
+    title =
+      "Goal Crusher 🏆";
+
+    text =
+      "You reached your savings goal! Celebrate this win.";
+
+  }
+
+
+  document.getElementById(
+    "achievementTitle"
+  ).textContent =
+    title;
+
+
+  document.getElementById(
+    "achievementText"
+  ).textContent =
+    text;
+
+}
+
+
+/* ADD SAVINGS */
+
+document
+  .getElementById(
+    "depositForm"
+  )
+  .addEventListener(
+    "submit",
+    function(event) {
+
+      event.preventDefault();
+
+
+      const amount =
+        Number(
+          document.getElementById(
+            "amount"
+          ).value
+        );
+
+
+      const note =
+        document.getElementById(
+          "note"
+        ).value.trim();
+
+
+      if (
+        !amount ||
+        amount <= 0
+      ) {
+
+        return;
+
+      }
+
+
+      data.saved += amount;
+
+
+      data.deposits.push({
+
+        amount: amount,
+
+        note: note,
+
+        date:
+          new Date()
+            .toLocaleDateString(
+              "en-NG",
+              {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+              }
+            )
+
+      });
+
+
+      event.target.reset();
+
+
+      saveData();
+
+    }
+  );
+
+
+/* UPDATE GOAL */
+
+document
+  .getElementById(
+    "goalForm"
+  )
+  .addEventListener(
+    "submit",
+    function(event) {
+
+      event.preventDefault();
+
+
+      const goal =
+        Number(
+          document.getElementById(
+            "goalInput"
+          ).value
+        );
+
+
+      const name =
+        document.getElementById(
+          "goalInputName"
+        ).value.trim();
+
+
+      if (goal > 0) {
+
+        data.goal =
+          goal;
+
+        data.goalName =
+          name ||
+          "My Savings Goal";
+
+
+        saveData();
+
+      }
+
+    }
+  );
+
+
+/* CHALLENGE BUTTONS */
+
+document
+  .querySelectorAll(
+    "[data-goal]"
+  )
+  .forEach(
+    button => {
+
+      button.onclick =
+        function() {
+
+          data.goal =
+            Number(
+              button.dataset.goal
+            );
+
+
+          data.goalName =
+            button.textContent
+              .replace(
+                /\s+/g,
+                " "
+              )
+              .trim() +
+            " Challenge";
+
+
+          saveData();
+
+
+          location.hash =
+            "dashboard";
+
+        };
+
+    }
+  );
+
+
+/* ADD SAVINGS BUTTON */
+
+document
+  .getElementById(
+    "addTop"
+  )
+  .onclick =
+  function() {
+
+    location.hash =
+      "add";
+
+  };
+
+
+/* DARK MODE */
+
+document
+  .getElementById(
+    "themeBtn"
+  )
+  .onclick =
+  function() {
+
+    data.dark =
+      !data.dark;
+
+    saveData();
+
+  };
+
+
+/* RESET */
+
+document
+  .getElementById(
+    "reset"
+  )
+  .onclick =
+  function() {
+
+    if (
+      confirm(
+        "Reset all SaveFlow progress?"
+      )
+    ) {
+
+      data = {
+
+        goal: 100000,
+
+        goalName:
+          "My Savings Goal",
+
+        saved: 0,
+
+        days:
+          Array(30).fill(false),
+
+        deposits: [],
+
+        dark: data.dark
+
+      };
+
+
+      saveData();
+
+    }
+
+  };
+
+
+/* START */
+
+render();
