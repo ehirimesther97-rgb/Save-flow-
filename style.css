@@ -13,9 +13,9 @@ html {
   --card: #ffffff;
   --text: #10251e;
   --muted: #71807a;
-  --green: #20966d;
-  --green-dark: #104d39;
-  --green-light: #dff3e9;
+  --yellow: #20966d;
+  --yellow-dark: #104d39;
+  --yellow-light: #dff3e9;
   --border: #e4ebe7;
   --shadow: 0 10px 30px rgba(16, 77, 57, 0.08);
   --danger: #d94c4c;
@@ -34,9 +34,9 @@ body.dark {
   --card: #15231e;
   --text: #f1f7f4;
   --muted: #a5b4ae;
-  --green: #39b985;
-  --green-dark: #0a3326;
-  --green-light: #193c30;
+  --yellow: #39b985;
+  --yellow-dark: #0a3326;
+  --yellow-light: #193c30;
   --border: #294139;
   --shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
 }
@@ -80,7 +80,7 @@ footer span {
 }
 
 .navbar nav a:hover {
-  color: var(--green);
+  color: var(--orange);
 }
 
 .icon-btn {
@@ -161,8 +161,8 @@ button {
   display: inline-block;
   padding: 10px 18px;
   border-radius: 100px;
-  background: var(--green-light);
-  color: var(--green);
+  background: var(--yellow-light);
+  color: var(--yellow);
   font-size: 13px;
   font-weight: 800;
 }
@@ -223,7 +223,7 @@ button {
 
 .hero .primary {
   background: white;
-  color: var(--green-dark);
+  color: var(--orange-dark);
 }
 
 .hero .secondary {
