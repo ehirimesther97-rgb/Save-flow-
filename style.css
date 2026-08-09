@@ -1,0 +1,316 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f7f8f4;
+  color: #14231d;
+  font-family: Arial, sans-serif;
+}
+
+.navbar {
+  max-width: 1050px;
+  margin: auto;
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 25px;
+  font-weight: 900;
+}
+
+.logo span {
+  color: #1f8f63;
+}
+
+.badge,
+.mini-badge {
+  background: #dff3e8;
+  color: #1f8f63;
+  border-radius: 99px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.hero {
+  margin: 0 24px;
+  background: linear-gradient(135deg, #17382c, #1f8f63);
+  border-radius: 28px;
+  padding: 34px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+}
+
+.hero h1 {
+  font-size: clamp(38px, 7vw, 62px);
+  line-height: .98;
+  letter-spacing: -2px;
+  margin: 18px 0;
+}
+
+.hero p {
+  color: #d9eee4;
+  line-height: 1.6;
+  max-width: 550px;
+}
+
+.primary-button {
+  display: inline-block;
+  border: 0;
+  border-radius: 12px;
+  background: #1f8f63;
+  color: white;
+  padding: 13px 18px;
+  font-weight: 800;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.hero .primary-button {
+  background: white;
+  color: #17382c;
+}
+
+.full {
+  width: 100%;
+}
+
+.progress-ring {
+  width: 175px;
+  height: 175px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: conic-gradient(
+    #ffffff 0deg,
+    #ffffff var(--angle, 0deg),
+    rgba(255,255,255,.2) var(--angle, 0deg)
+  );
+  flex-shrink: 0;
+}
+
+.ring-inner {
+  width: 145px;
+  height: 145px;
+  border-radius: 50%;
+  background: #1c7754;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+
+.ring-inner strong {
+  display: block;
+  font-size: 30px;
+}
+
+.ring-inner span {
+  color: #d9eee4;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin: 20px 24px;
+}
+
+.stat-card,
+.form-card,
+.history-card,
+.challenge-card {
+  background: white;
+  border: 1px solid #e7ece8;
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 5px 18px rgba(20,35,29,.05);
+}
+
+.stat-card span {
+  display: block;
+  color: #718078;
+  font-size: 14px;
+}
+
+.stat-card strong {
+  display: block;
+  font-size: 23px;
+  margin-top: 7px;
+}
+
+.section {
+  margin-top: 28px;
+}
+
+.section-heading {
+  margin: 0 24px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-heading h2,
+.form-card h2 {
+  margin: 0 0 5px;
+}
+
+.section-heading p,
+.form-card p {
+  margin: 0;
+  color: #718078;
+  font-size: 13px;
+}
+
+.challenge-card {
+  margin: 0 24px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 9px;
+}
+
+.day {
+  border: 1px solid #e7ece8;
+  border-radius: 12px;
+  padding: 12px 5px;
+  text-align: center;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.day:hover {
+  transform: translateY(-2px);
+}
+
+.day.done {
+  background: #dff3e8;
+  border-color: #bce6d0;
+}
+
+.day small {
+  color: #718078;
+}
+
+.day b {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+}
+
+.forms {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 20px 24px;
+}
+
+.form-card form {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.form-card label {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.form-card input {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #dfe7e1;
+  border-radius: 10px;
+  font: inherit;
+}
+
+.form-card input:focus {
+  outline: none;
+  border-color: #1f8f63;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 12px 7px;
+  border-bottom: 1px solid #e7ece8;
+  font-size: 14px;
+}
+
+th {
+  color: #718078;
+}
+
+.empty {
+  text-align: center;
+  color: #718078;
+  padding: 20px;
+}
+
+.reset-button {
+  border: 0;
+  background: none;
+  color: #c95050;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+footer {
+  text-align: center;
+  color: #718078;
+  padding: 30px 20px;
+  font-size: 12px;
+}
+
+@media (max-width: 700px) {
+
+  .hero {
+    margin: 0 14px;
+    padding: 24px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .progress-ring {
+    align-self: center;
+  }
+
+  .stats {
+    margin: 14px;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .challenge-card {
+    margin: 0 14px;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .forms {
+    margin: 16px 14px;
+    grid-template-columns: 1fr;
+  }
+
+  .section-heading {
+    margin-left: 14px;
+    margin-right: 14px;
+  }
+
+  .navbar {
+    padding: 18px 14px;
+  }
+
+  .hero h1 {
+    font-size: 45px;
+  }
+}
