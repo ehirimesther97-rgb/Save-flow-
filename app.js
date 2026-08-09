@@ -125,7 +125,7 @@ function setGoal() {
   const goal = Number(value);
 
   if (!goal || goal <= 0) {
-    alert("Please enter a valid goal.");
+    alert("savings challenge");
     return;
   }
 
